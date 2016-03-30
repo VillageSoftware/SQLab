@@ -10,9 +10,9 @@ Say you want to replace one piece of SQL with another one, in order to refactor 
 
 ## Installation
 
-Binaries may be provided in future. For now, `clone` and build with VS 2013+.
+ * Download and unzip [SQLabBinaries.zip](./SQLabBinaries.zip) in a location of your choice.
 
-Set your connection string in `sqlab.exe.config`
+ * Set your connection string in `sqlab.exe.config`
 
 
 ## Usage
@@ -57,6 +57,10 @@ You can grep/find the following codes to get error messages.
 
 See [LICENSE.txt](./LICENSE.txt)
 
+
+## Contributing
+
+Contributions are not anticipated, but if you would like to contribute, please open an Issue to discuss the change first. :)
 
 ## About us
 
