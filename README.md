@@ -39,6 +39,7 @@ This application is strongly designed for the command line. It uses [Windows sta
 	0x00	Results are equal
 	0x01	Results are different
 	0x02 	File not found
+	0x06	Invalid handle (if SQL query failed)
 	0xA0	Not enough arguments
 
 	
@@ -46,8 +47,9 @@ This application is strongly designed for the command line. It uses [Windows sta
 
 You can grep/find the following codes to get error messages.
 
- * If there are differences, a line beginning with the word **Fail:** will be written, followed by an error message. A few lines will be written to show the nature of the difference.
- * If there are no differences, a line beginngin with **Success:** will be written.
+ * If there are differences, a line starting **Fail:** will be written, with an explanation. A few lines will be written which show the nature of the difference.
+ * If there are no differences, a line beginning with **Success:** will be written.
+ * If there is an error, a line starting **Error:** will be written with an explanation.
  * When the script has finished, the word **Done** will be written.
 
 

@@ -52,7 +52,16 @@ namespace SQLab
             //Run SQL files
 
             var results1 = RunSql(sql1);
+            if (results1 == null)
+            {
+                return 0x6; //Invalid handle (SQL failure)
+            }
+
             var results2 = RunSql(sql2);
+            if (results2 == null)
+            {
+                return 0x6; //Invalid handle (SQL failure)
+            }
 
             //Compare results
 
@@ -98,35 +107,42 @@ namespace SQLab
                 conn.Open();
                 using (var command = new SqlCommand(sql, conn))
                 {
-                    //TODO: Add parameters
-                    using (var reader = command.ExecuteReader())
+                    try
                     {
-                        do
+                        using (var reader = command.ExecuteReader())
                         {
-                            //Default number of columns
-                            int width = _defaultNumberOfColumns;
-                            bool firstRun = true;
-
-                            foreach (IDataRecord dataRow in reader)
+                            do
                             {
-                                var values = new object[width];
+                                //Default number of columns
+                                int width = _defaultNumberOfColumns;
+                                bool firstRun = true;
 
-                                //Get the values and correct the number of columns
-                                width = dataRow.GetValues(values);
-
-                                if (firstRun)
+                                foreach (IDataRecord dataRow in reader)
                                 {
-                                    values = values.Take(width).ToArray();
+                                    var values = new object[width];
+
+                                    //Get the values and correct the number of columns
+                                    width = dataRow.GetValues(values);
+
+                                    if (firstRun)
+                                    {
+                                        values = values.Take(width).ToArray();
+                                    }
+
+                                    string row = String.Join(",", values.Select(v => v.ToString()));
+                                    rows.Add(row);
+
+                                    firstRun = false;
                                 }
 
-                                string row = String.Join(",", values.Select(v => v.ToString()));
-                                rows.Add(row);
-
-                                firstRun = false;
-                            }
-
-                            //Read multiple batches using NextResult
-                        } while (reader.NextResult());
+                                //Read multiple batches using NextResult
+                            } while (reader.NextResult());
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Output("Error: ({0}) {1}", ConsoleColor.Red, ex.GetType().ToString(), ex.Message);
+                        return null;
                     }
                 }
             }
