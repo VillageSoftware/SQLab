@@ -87,6 +87,11 @@ namespace SQLab
                 }
             }
 
+            if (i == 0)
+            {
+                Output("Warning: There were no results to compare. Check your SQL files.", ConsoleColor.Yellow);
+            }
+
             if (resultCode == 0)
             {
                 Output("Success: The results are the same.", ConsoleColor.Green);

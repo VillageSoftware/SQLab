@@ -42,15 +42,27 @@ This application is strongly designed for the command line. It uses [Windows sta
 	0x06	Invalid handle (if SQL query failed)
 	0xA0	Not enough arguments
 
+If there is a Warning, the program will still exit with code `0x0`.
 	
 ### Screen text
 
-You can grep/find the following codes to get error messages.
+You can grep/find the output of the program to get result messages, using the following patterns.
 
- * If there are differences, a line starting **Fail:** will be written, with an explanation. A few lines will be written which show the nature of the difference.
- * If there are no differences, a line beginning with **Success:** will be written.
- * If there is an error, a line starting **Error:** will be written with an explanation.
- * When the script has finished, the word **Done** will be written.
+ *	If there are differences:
+	`**Fail:** <failure message>`
+	`<failure details ... >`
+	
+ * 	If there are no differences:
+	`**Success:** <message>`
+	
+ *	If there is an error:
+	`**Error:** <message>`
+	
+ *	If there are no results:
+	`**Warning:** <message>`
+	
+ *	When the program finishes (this is the last thing it writes):
+	`**Done**`
 
 
 ## License
