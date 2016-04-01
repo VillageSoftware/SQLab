@@ -48,21 +48,21 @@ If there is a Warning, the program will still exit with code `0x0`.
 
 You can grep/find the output of the program to get result messages, using the following patterns.
 
- *	If there are differences:
-	`**Fail:** <failure message>`
-	`<failure details ... >`
+ *	If there are differences:  
+	`Fail: <failure message>`  
+	`<failure details ... >`  
 	
- * 	If there are no differences:
-	`**Success:** <message>`
+ * 	If there are no differences:  
+	`Success: <message>`  
 	
- *	If there is an error:
-	`**Error:** <message>`
+ *	If there is an error:  
+	`Error: <message>`  
 	
- *	If there are no results:
-	`**Warning:** <message>`
+ *	If there are no results:  
+	`Warning: <message>`  
 	
- *	When the program finishes (this is the last thing it writes):
-	`**Done**`
+ *	When the program finishes (this is the last thing it writes):  
+	`Done`  
 
 
 ## License
