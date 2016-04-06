@@ -16,6 +16,7 @@ namespace SQLab
     {
         private string _connectionString;
         private const int _defaultNumberOfColumns = 255;
+        private int? _limitNumberOfColumns = null;
 
         public CLI() { }
 
@@ -35,6 +36,8 @@ namespace SQLab
                 return 0xA0; //Bad args
             }
 
+            _limitNumberOfColumns = ParseArgs(args);
+
             //Load SQL files from args
 
             string sql1 = LoadSql(args[0]);
@@ -51,21 +54,41 @@ namespace SQLab
 
             //Run SQL files
 
-            var results1 = RunSql(sql1);
-            if (results1 == null)
+            List<string> results1;
+            List<string> results2;
+
+            try
+            {
+                results1 = RunSql(sql1);
+                results2 = RunSql(sql2);
+            }
+            catch (ApplicationException)
             {
                 return 0x6; //Invalid handle (SQL failure)
             }
-
-            var results2 = RunSql(sql2);
-            if (results2 == null)
+            catch (ArgumentException)
             {
-                return 0x6; //Invalid handle (SQL failure)
+                return 0xA0; //Bad args
             }
 
             //Compare results
 
             int resultCode = 0;
+
+            int max = Math.Min(results1.Count, results2.Count);
+            //int diff = Math.Abs(results1.Count - results2.Count);
+
+            int i;
+            for (i = 0; i < max; i++)
+            {
+                if (results1[i] != results2[i])
+                {
+                    Output("Fail: row number {0} has differences", ConsoleColor.Red, i);
+                    Output("A ='{0}'", results1[i]);
+                    Output("B ='{0}'", results2[i]);
+                    resultCode = 0x1;
+                }
+            }
 
             if (results1.Count != results2.Count)
             {
@@ -75,16 +98,9 @@ namespace SQLab
                 resultCode = 0x1;
             }
 
-            int i;
-            for (i = 0; i < results1.Count; i++)
+            if (_limitNumberOfColumns.HasValue)
             {
-                if (results1[i] != results2[i])
-                {
-                    Output("Fail: row number {0} has differences", ConsoleColor.Red, i);
-                    Output("A ='{0}'", results1[i]);
-                    Output("B ='{0}'", results2[i]);
-                    resultCode = 0x1;
-                }
+                Output("Warning: Only the first {0} columns were checked, because of the --only option", ConsoleColor.Yellow, _limitNumberOfColumns);
             }
 
             if (i == 0)
@@ -103,6 +119,26 @@ namespace SQLab
 
         }
 
+        private int? ParseArgs(string[] args)
+        {
+            if (args.Length > 2 && args[2] == "--only")
+            {
+                if (args.Length == 3)
+                {
+                    Output("Warning: User specified --only flag but without a number of fields", ConsoleColor.Yellow);
+                    return null;
+                }
+
+                int validInt;
+                if (Int32.TryParse(args[3], out validInt))
+                {
+                    return validInt;
+                }
+            }
+
+            return null;
+        }
+
         private List<string> RunSql(string sql)
         {
             var rows = new List<string>();
@@ -119,7 +155,7 @@ namespace SQLab
                             do
                             {
                                 //Default number of columns
-                                int width = _defaultNumberOfColumns;
+                                int width = _limitNumberOfColumns ?? _defaultNumberOfColumns;
                                 bool firstRun = true;
 
                                 foreach (IDataRecord dataRow in reader)
@@ -129,13 +165,26 @@ namespace SQLab
                                     //Get the values and correct the number of columns
                                     width = dataRow.GetValues(values);
 
+                                    if (_limitNumberOfColumns.HasValue)
+                                    {
+                                        width = _limitNumberOfColumns.Value;
+                                    }
+
                                     if (firstRun)
                                     {
                                         values = values.Take(width).ToArray();
                                     }
 
-                                    string row = String.Join(",", values.Select(v => v.ToString()));
-                                    rows.Add(row);
+                                    try
+                                    {
+                                        string row = String.Join(",", values.Select(v => v.ToString()));
+                                        rows.Add(row);
+                                    }
+                                    catch (NullReferenceException)
+                                    {
+                                        Output("Error: Some results have fewer columns than specified in the --only option. Please remove or reduce the --only option and try again.", ConsoleColor.Red);
+                                        throw new ArgumentException();
+                                    }
 
                                     firstRun = false;
                                 }
@@ -147,7 +196,7 @@ namespace SQLab
                     catch (Exception ex)
                     {
                         Output("Error: ({0}) {1}", ConsoleColor.Red, ex.GetType().ToString(), ex.Message);
-                        return null;
+                        throw new ApplicationException();
                     }
                 }
             }

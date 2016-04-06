@@ -17,14 +17,18 @@ Say you want to replace one piece of SQL with another one, in order to refactor 
 
 ## Usage
 
+	Compare the results from two SQL files:
 	sqlab File1.sql File2.sql
+	
+	Compare only the first 4 columns from each file:
+	sqlab File1.sql File2.sql --only 4
 
 	
 ## Behaviour
 
 The script will run both of the specified SQL files on the database and then write all results to a CSV format in memory. It can handle multiple batches of results, accumulating them into one set.
 
-When finished, the CSV files are compared, first for the Count of results, then line-by-line.
+When finished, the CSV files are compared, for the count of results, and line-by-line. If one file has fewer results than the other, then the lower number is the number of rows that will be checked.
 
 If a difference is encountered, the program will still continue to compare the other rows.
 
