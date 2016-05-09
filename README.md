@@ -10,10 +10,9 @@ Say you want to replace one piece of SQL with another one, in order to refactor 
 
 ## Installation
 
- * Download and unzip [SQLabBinaries.zip](./SQLabBinaries.zip) in a location of your choice.
-
+ * Go to [Latest Release][latest], and download and unzip it in a location of your choice. Add the SQLab directory to your `PATH` to make it run from anywhere at the command line.
+ 
  * Set your connection string in `sqlab.exe.config`
-
 
 ## Usage
 
@@ -86,3 +85,4 @@ At [Village Software][vs], we design and develop enterprise-grade solutions. We 
 [sci]: https://github.com/github/scientist
 [codes]: https://msdn.microsoft.com/en-gb/library/ms681382.aspx
 [vs]: http://villagesoftware.co.uk
+[latest]: https://github.com/VillageSoftware/SQLab/releases/latest
